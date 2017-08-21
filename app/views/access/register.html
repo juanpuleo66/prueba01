@@ -1,0 +1,107 @@
+<div class="row">
+	<div class="col-md12">
+		<div class="col-md-4">
+		</div>
+		
+		<div *ngIf="identity && identity.role == 'admin'" >
+			<div *ngIf="status == 'success'" class="col-md-4">
+				<div class="note note-success">
+					<h3>{{status}} {{code}}</h3> 
+				    <p>{{msg}}</p>
+				    <p><a [routerLink]="['/login']">Click here to Login</a></p>
+				</div>
+			</div>
+			
+			<div *ngIf="status == 'error'" class="col-md-4">
+				<div class="note note-danger">
+					<h3>{{status}} {{code}}</h3>
+				    <p>{{msg}}</p>
+				</div>
+			</div>
+		</div>	    
+			
+		<div class="clearfix"></div>
+		
+		<div class="col-md-4">
+		</div>
+		
+		<div class="col-md-4">
+		    <div class="portlet light bordered">
+		    	<div class="portlet-title">
+		        	<div class="caption">
+		            	<i class="fa fa-user-plus"></i> {{titulo}}
+		            </div>
+					<div class="tools">
+						<a [routerLink]="['/index']" title="Close"><i class="fa fa-close fa-lg"></i></a>
+		        	</div>
+		    	</div>
+					
+		        <div class="portlet-body form">
+		            <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+		                <div class="form-body">
+		                    <div class="form-group has-success">
+		                    	<p>
+				                	<label class="control-label">Name <span class="required" aria-required="true">*</span></label>
+									<input 
+										#name="ngForm" 
+										ngControl="name" 
+										type="text" 
+										class="form-control input-sm" 
+										[(ngModel)]="user.name" 
+										required
+									>
+									<span *ngIf="!name.valid && name.touched" class="required" aria-required="true">The name is required</span>
+		                        </p>
+		                        
+		                    	<p>
+				                	<label class="control-label">Last Name <span class="required" aria-required="true">*</span></label>
+									<input 
+										#surname="ngForm" 
+										ngControl="surname" 
+										type="text" 
+										class="form-control input-sm" 
+										[(ngModel)]="user.surname" 
+										required
+									>
+									<span *ngIf="!surname.valid && surname.touched" class="required" aria-required="true">The last name is required</span>
+		                        </p>
+		                        
+		                    	<p>
+				                	<label class="control-label">Email <span class="required" aria-required="true">*</span></label>
+									<input 
+										#email="ngForm" 
+										ngControl="email" 
+										type="email" 
+										class="form-control input-sm" 
+										[(ngModel)]="user.email" 
+										required
+									>
+									<span *ngIf="!email.valid && email.touched" class="required" aria-required="true">The email is required</span>
+		                        </p>
+									
+		                    	<p>
+				                	<label class="control-label">Password <span class="required" aria-required="true">*</span></label>
+									<input 
+										#password="ngForm" 
+										ngControl="password" 
+										type="password" 
+										class="form-control input-sm" 
+										[(ngModel)]="user.password" 
+										required
+									>
+									<span *ngIf="!password.valid && password.touched" class="required" aria-required="true">The password is required</span>
+		                        </p>
+		                        
+		                    </div>
+		               </div>
+
+		                <div class="form-actions">
+		                    <input type="submit" value="Submit" class="btn btn-success">
+		                    <input type="reset" value="Reset" class="btn btn-default">
+		                </div>
+		            </form>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>

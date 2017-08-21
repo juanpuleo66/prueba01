@@ -1,0 +1,15 @@
+<div class="col-md-12">
+	<div *ngIf="identity || identity != null" class="col-md-6">
+		<div class="note note-success">
+  	  		<h3><small>{{titulo}}</small></h3> 
+			<p>{{identity.name}} {{identity.surname}}</p>
+		</div>
+	</div>
+
+	<div *ngIf="!identity || identity == null" class="col-md-6">
+		<div class="note note-info">
+		  	<h3><small>{{titulo}}</small></h3>
+    		<p>Please Login for more options</p>
+		</div>
+	</div>
+</div>

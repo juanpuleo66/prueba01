@@ -1,0 +1,110 @@
+.block {
+  display: block !important;
+}
+
+.backGroundColor-a {
+  background-color: #e6f2ff;
+}
+
+.page-header.navbar .page-logo {
+	margin-top: 10px !important; 
+}
+
+.top-menu-text {
+  font-size:18px !important;
+}
+
+.top-menu-icon {
+  color: #337ab7 !important;
+}
+
+.logo-default {
+	margin-top: 0px !important; 
+	padding-top: 8px !important; 
+	padding-left: 10px !important; 
+	padding-right: 10px !important; 
+	padding-bottom: 0px !important; 
+  background-color: #80ffbf !important;
+}
+
+.navbar { /* menu container */
+	background-color: #fff !important;
+  min-height: 60px !important;
+  height: 60px !important;
+  margin-bottom: 5px !important;
+  border-bottom: 1px solid #d9d9d9 !important;
+  /*border: 2px solid transparent !important;*/
+}
+
+.menu-toggler {
+    margin-top: 15px !important;
+}
+
+.navbar-brand { /* logo */
+    padding: 0px 130px 0px 40px !important;
+    width: 210px !important;
+}
+
+.page-header-fixed .page-container { /* container of the container */
+	margin-top: 5px !important; 
+}
+
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {
+    background-color: #f2f6f9 !important;
+    color: #5b9bd1 !important;
+}
+
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    background-color: #f2f6f9 !important;
+    color: #5b9bd1 !important;
+}
+
+.dropdown-menu>li>a:hover, .dropdown-menu > li:hover > a {
+   background-color: #f2f6f9 !important;
+   color: #5b9bd1 !important; 
+}
+
+.footer {
+	background: #efefef;
+  height: 60px;
+  margin-top: 100px;
+}    
+
+.page-container {
+  padding: 5px 5px 20px 5px !important;
+}
+.page-content {
+  padding: 0px 0px 0px 0px !important;
+}
+
+.table td, .table th {
+  font-size: 12px !important;
+}
+
+body {
+  font-size: 12px !important;
+}
+
+.classDivTableData1 {
+  /*shows only the data that fites un the field*/
+  width:100%; 
+  height:16px; 
+  overflow:hidden;
+}
+
+.classDivTableData2 {
+  /*shows all the data that from the field*/
+  width:100%; 
+  height:auto; 
+  overflow:visible;
+}
+
+.white {
+    background-color:#FFFFFF;
+    color:#000000;
+}
+
+.black {
+    background-color:#000000;
+    color:#FFFFFF;
+}

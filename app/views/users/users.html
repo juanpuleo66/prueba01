@@ -1,0 +1,351 @@
+<common-functions></common-functions>
+
+<div class="col-md-12">
+    <div *ngIf="loading == 'show'" class="progress progress-striped active">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%" ></div>
+    </div>
+</div>  
+
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <div *ngIf="status == 'error'">
+                <div class="note note-danger">
+                    <h3>{{status}} {{code}}</h3>
+                    <p>{{msg}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="portlet light bordered">      
+        <div class="portlet-title">
+            <div class="caption font-dark">
+                <i class="fa fa-users font-dark"></i>
+                <span name="titulo" class="caption-subject bold uppercase">Users</span>
+            </div>
+
+            <div class="collapse navbar-collapse pull-right">
+                <div class="btn-group pull-right">
+                    <a *ngIf="searchString == null"
+                        [routerLink]="['/user_new', firstPage, itemsPerPage]" 
+                        type="button" 
+                        class="btn btn-success" 
+                        title="Create Resource"
+                        style="margin-top:10px;"
+                    >
+                        <i class="fa fa-user-plus fa-lg"></i>
+                        New
+                    </a>
+                        
+                    <a *ngIf="searchString != null"
+                        [routerLink]="['/user_new', firstPage, itemsPerPage, searchString]"
+                        type="button" 
+                        class="btn btn-success" 
+                        title="Create Resource"
+                        style="margin-top:10px;"
+                    >
+                        <i class="fa fa-user-plus fa-lg"></i>
+                        New
+                    </a>
+                </div>
+            </div>
+        </div>
+         
+        <div class="portlet-body">
+            <div class="table-toolbar"> 
+                <div class="row">
+                    <div class="col-md-5">
+                        <ul class="pagination pagination-sm">
+                            <li title="First Page">
+                                <a *ngIf="totalPages == 1 || pageActual == 1"><i class="fa fa-angle-double-left"></i></a>
+                                <a *ngIf="totalPages != 1 && pageActual != 1" (click)="search(firstPage, searchString, itemsPerPage)">
+                                    <i class="fa fa-angle-double-left"></i>
+                                </a>
+                            </li>
+                            <li title="Previous Page">
+                                <a *ngIf="totalPages == 1 || pageActual == 1"><i class="fa fa-angle-left"></i></a>
+                                <a *ngIf="totalPages != 1 && pageActual != 1" (click)="search(pagePrev, searchString, itemsPerPage)">
+                                    <i class="fa fa-angle-left"></i>
+                                </a>
+                            </li>
+
+                            <li class="active" title="Actual Page">
+                                <a>{{pageActual}}</a>
+                            </li>
+                                 
+                            <li title="Next Page">
+                                <a *ngIf="totalPages == 1 || pageActual == totalPages"><i class="fa fa-angle-right"></i></a>
+                                <a *ngIf="totalPages != 1 && pageActual != totalPages" (click)="search(pageNext, searchString, itemsPerPage)">
+                                    <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li title="Last Page">
+                                <a *ngIf="totalPages == 1 || pageActual == totalPages"><i class="fa fa-angle-double-right"></i></a>
+                                <a *ngIf="totalPages != 1 && pageActual != totalPages" (click)="search(totalPages, searchString, itemsPerPage)">
+                                    <i class="fa fa-angle-double-right"></i>
+                                </a>
+                            </li>
+                              
+                            <li> <a>Records/Page: {{itemsPerPage}}</a> </li>  
+                            <li> <a>Records: {{totalRecords}}</a> </li>
+                            <li> <a>Pages: {{totalPages}}</a> </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="pagination pagination-sm" id="sample_2_length">
+                            <label class="text-primary">Show 
+                                <select [(ngModel)]="itemsPerPage" #items (change)="search(pageActual, searchString, items.value)" id="itemsPerPage" name="sample_2_length" aria-controls="sample_2" class="form-control input-sm input-xsmall input-inline">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="15">15</option>
+                                    <option value="20">20</option>
+                                    <option value="All">All</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                     
+                    <div class="col-md-5">
+                        <form class="navbar-form navbar-left" role="search">
+                            <div class="form-group">
+                                <input 
+                                type="text" 
+                                class="form-control" 
+                                placeholder="Name to search ?" 
+                                value="{{searchString}}" 
+                                [(ngModel)]="searchString"
+                                style="height: 30px; margin-top:3px;" 
+                                >
+                            </div>
+                            <!-- <button type="submit" class="btn btn-default" (click)="search()" style="height: 30px; margin-top:3px;" > -->
+                            <button type="submit" class="btn btn-default" (click)="search(null, searchString, itemsPerPage)" style="height: 30px; margin-top:3px;" >
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </form>
+                    </div>    
+                </div>
+            </div>
+<!-- <div style="position: relative; overflow: auto; width: 100%; max-height: 300px;"> -->
+
+            <table 
+                class="table table-striped table-hover table-condensed table-checkable order-column" id="sample_1" style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 700px;"
+            >
+                <thead style="background-color: #fafafa;">
+                    <tr>
+                        <th style="width:60px;"> 
+                            <a (click)="setOrder('userdata.id')">id
+                                <i *ngIf="colAct != 'userdata.id'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'userdata.id' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'userdata.id' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                        
+                        <th style="width:220px;"> 
+                            <a (click)="setOrder('userdata.name')">Name
+                                <i *ngIf="colAct != 'userdata.name'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'userdata.name' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'userdata.name' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                        
+                        <th style="width:220px;"> 
+                            <a (click)="setOrder('userdata.surname')">Surname
+                                <i *ngIf="colAct != 'userdata.surname'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'userdata.surname' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'userdata.surname' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                        
+                        <th style="width:220px;"> 
+                            <a (click)="setOrder('userdata.email')">Email
+                                <i *ngIf="colAct != 'userdata.email'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'userdata.email' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'userdata.email' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                            
+                        <th style="width:220px;"> 
+                            <a (click)="setOrder('userdata.role')">Role
+                                <i *ngIf="colAct != 'userdata.role'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'userdata.role' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'userdata.role' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                            
+                        <th style="width:220px;"> 
+                            <a (click)="setOrder('groupName')">Group
+                                <i *ngIf="colAct != 'groupName'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'groupName' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'groupName' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                        
+                        <th style="width:220px;"> 
+                            <a (click)="setOrder('userdata.createdAt.timestamp')">Created
+                                <i *ngIf="colAct != 'userdata.createdAt.timestamp'" class="fa fa-sort"></i>
+                                <i *ngIf="colAct == 'userdata.createdAt.timestamp' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                <i *ngIf="colAct == 'userdata.createdAt.timestamp' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            </a>
+                        </th>
+                        
+                        <th style="width:200px;" class="text-primary">
+                            Actions
+                        </th>         
+                    </tr>
+                </thead>
+
+<!--            <tbody style="display: block; overflow-y: auto; height: 300px;"> -->
+                <tbody>
+                    <tr *ngFor="let user of users" class="odd gradeX">
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.userdata.id}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.userdata.id}}</td>
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.userdata.name}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.userdata.name}}</td>
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.userdata.surname}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.userdata.surname}}</td>
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.userdata.email}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.userdata.email}}</td>
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.userdata.role}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.userdata.role}}</td>
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.groupName}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.groupName}}</td>
+                        <td *ngIf="user.userdata.isActive==0" class="font-red">{{user.userdata.createdAt.timestamp | generateDate}}</td>
+                        <td *ngIf="user.userdata.isActive==1" class="font-dark">{{user.userdata.createdAt.timestamp | generateDate}}</td>          
+                        
+                        <td>
+                            <a *ngIf="searchString == null && user.userdata.isActive==1"
+                            [routerLink]="['/user_edit', user.userdata.id, pageActual, itemsPerPage]" 
+                            title="Edit User"
+                            ><i class="fa fa-edit fa-lg"></i></a>
+                            
+                            <a *ngIf="searchString == null && user.userdata.isActive==0"
+                            [routerLink]="['/user_edit', user.userdata.id, pageActual, itemsPerPage]" 
+                            title="Edit User"
+                            ><i class="fa fa-edit fa-lg font-red"></i></a>
+                            
+                            <a *ngIf="searchString != null && user.userdata.isActive==1"
+                            [routerLink]="['/user_edit', user.userdata.id, pageActual, searchString, itemsPerPage]" 
+                            title="Edit User"
+                            ><i class="fa fa-edit fa-lg"></i></a>
+                            
+                            <a *ngIf="searchString != null && user.userdata.isActive==0" 
+                            [routerLink]="['/user_edit', user.userdata.id, pageActual, searchString, itemsPerPage]" 
+                            title="Edit User"
+                            ><i class="fa fa-edit fa-lg font-red"></i></a>
+                            &nbsp;
+                            
+                            <a *ngIf="searchString == null && user.userdata.isActive==1"
+                            [routerLink]="['/user_view', user.userdata.id, pageActual, itemsPerPage]" 
+                            title="View User's Data"
+                            ><i class="fa fa-file-text-o fa-lg"></i></a>
+                            
+                            <a *ngIf="searchString == null && user.userdata.isActive==0"
+                            [routerLink]="['/user_view', user.userdata.id, pageActual, itemsPerPage]" 
+                            title="View User's Data"
+                            ><i class="fa fa-file-text-o fa-lg font-red"></i></a>
+                            
+                            <a *ngIf="searchString != null && user.userdata.isActive==1"
+                            [routerLink]="['/user_view', user.userdata.id, pageActual, searchString, itemsPerPage]" 
+                            title="View User's Data"
+                            ><i class="fa fa-file-text-o fa-lg"></i></a>
+                                
+                            <a *ngIf="searchString != null && user.userdata.isActive==0"
+                            [routerLink]="['/user_view', user.userdata.id, pageActual, searchString, itemsPerPage]" 
+                            title="View User's Data"
+                            ><i class="fa fa-file-text-o fa-lg font-red"></i></a>
+                            &nbsp;
+
+                            <a   *ngIf="user.userdata.isActive != 0"  (click)="changeActivateStatus(user.userdata.id,'0')"
+                                id="btnDeactivate"                  
+                                href="#deactivateWindow"               
+                                data-toggle="modal"             
+                                class="open-AddBookDialog"      
+                                [attr.data-id]="user.userdata.id" 
+                                title="Deactivate User"
+                            >
+                                <i class="fa fa-user-times fa-lg"></i>
+                            </a>
+
+                            <a *ngIf="user.userdata.isActive != 1"  (click)="changeActivateStatus(user.userdata.id,'1')"
+                                id="btnActivate"                  
+                                href="#activateWindow"               
+                                data-toggle="modal"             
+                                class="open-AddBookDialog"      
+                                [attr.data-id]="user.userdata.id" 
+                                title="Activate User"
+                            >
+                                <i class="fa fa-user-plus fa-lg font-red"></i>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--
+<div class="modal fade" id="deleteWindow" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                <h4>Delete User</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>If you delete this user can not be recovered, delete anyway ?</p>
+                <span #recordId id="recordId" value=""></span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>    
+                <button (click)="deleteUser(recordId.value, pageActual)" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deactivateWindow" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                <h4>Deactivate User</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>Do you want deactivate this user?</p>
+                <span #recordId id="recordId" value=""></span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>    
+                <button (click)="deleteUser(recordId.value, pageActual)" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="activateWindow" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                <h4>Activate User</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>Do you want activate this user?</p>
+                <span #recordId id="recordId" value=""></span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>    
+                <button (click)="deleteUser(recordId.value, pageActual)" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+-->

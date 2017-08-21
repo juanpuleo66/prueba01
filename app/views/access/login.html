@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-md-2"></div>
+    <div *ngIf="status == 'error'" class="col-md-4">
+        <div class="note note-danger">
+            <h3>{{status}}</h3>
+            <p>{{msg}}</p>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-md-2"></div>
+    <div *ngIf="showPage == true" class="col-md-4">
+        <div class="portlet light bordered">
+            <div class="content">
+                <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+                    <h4 class="caption-subject bold font-green">{{titulo}}</h4>
+                    <hr>
+
+                    <div class="form-group">
+                        <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                        <label class="control-label visible-ie8 visible-ie9">Email</label>
+                        <div class="input-icon">
+                            <i class="fa fa-envelope-o"></i>
+                                <input 
+                                    class="form-control placeholder-no-fix" 
+                                    type="text" 
+                                    autocomplete="off" 
+                                    placeholder="Email" 
+                                    title="Email" 
+
+                                    #email="ngForm" 
+                                    ngControl="email" 
+                                    type="email" 
+                                    class="form-control" 
+                                    [(ngModel)]="user.email" 
+                                    required
+                                >
+                                <span *ngIf="!email.valid && email.touched" class="required" aria-required="true">The email is requiered </span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label visible-ie8 visible-ie9">Password</label>
+                        <div class="input-icon">
+                            <i class="fa fa-lock"></i>
+                            <input 
+                                class="form-control placeholder-no-fix" 
+                                type="password" 
+                                autocomplete="off" 
+                                placeholder="Password" 
+                                title="Password" 
+                                    
+                                #password="ngForm" 
+                                ngControl="password" 
+                                type="password" 
+                                class="form-control" 
+                                [(ngModel)]="user.password" 
+                                required
+                            >
+                            <span *ngIf="!password.valid && password.touched" class="required" aria-required="true">The password is required</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <label class="rememberme mt-checkbox mt-checkbox-outline">
+                            <input type="checkbox" name="remember" value="1" /> Remember me
+                            <span></span>
+                        </label>
+                        <input 
+                            type="submit" 
+                            value="Login" 
+                            class="btn green pull-right"
+                            [disabled]="!loginForm.form.valid"
+                        >
+                        <p *ngIf="!loginForm.form.valid"></p>
+                        <div *ngIf="!loginForm.form.valid && ( email.touched && password.touched)" class="alert alert-danger " style="text-align: center;"><strong >Form not valid</strong></div>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>        
+    </div> 
+    <div class="col-md-4"></div>
+</div>     
+
+
+

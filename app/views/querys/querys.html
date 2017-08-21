@@ -1,0 +1,409 @@
+<common-functions></common-functions>
+<window-modal-message></window-modal-message>
+<div class="col-md-12">
+    <div *ngIf="loading == 'show'" class="progress progress-striped active">
+        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%" ></div>
+    </div>
+</div>	
+    
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12">
+            <div *ngIf="status == 'error'">
+                <div class="note note-danger">
+                    <h3>{{status}} {{code}}</h3>
+                    <p>{{msg}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div class="row">
+        <div class="col-md-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span name="titulo" class="caption-subject bold"><i class="fa fa-database"></i> Resources</span>
+                    </div>
+                </div>
+                    
+                <div class="portlet-body">
+                    <table 
+                        class="table table-striped table-bordered table-hover table-condensed table-checkable order-column" id="sample_1"
+                        style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 293px;"
+                    >
+                        <thead style="background-color: #fafafa;">
+                            <tr>
+                                <th style="width:60px;">Id</th>
+                                <th style="width:200px;">Name</th>                                
+                                <th style="width:40px;">Add</th>                                
+                                <th style="width:20px;"><i class="fa fa-ellipsis-h"></i></th>                               
+                            </tr>
+                        </thead>
+                            
+                        <!--<tbody style="display: block; overflow-y: auto; height: 300px;">-->
+                        <tbody>
+                            <tr *ngFor="let resource of resources" class="odd gradeX">
+                                <td>{{resource.id}}</td>
+                                <td>{{resource.name.substring(0,23)}}</td>
+                                <td class="text-center">
+                                    <a title="Add resource id" (click)="addResourceId(resource.id)"><i class="fa fa-plus-circle fa-lg"></i></a>                                      
+                                </td>
+
+                                <td>
+                                    <a
+                                        id="btnShow"                  
+                                        href="#modalShow1"               
+                                        data-toggle="modal"             
+                                        class="open-AddBookDialog"      
+                                        [attr.data-datashow]="resource.name"
+                                        title="Show resource name"
+                                    >
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>          
+        </div>
+
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light bordered">  		
+          	            <div class="portlet-title">
+                            <div class="caption font-dark">
+                                <i class="fa fa-list-alt"></i>
+                                <span name="titulo" class="caption-subject bold">{{titulo}}</span>
+                                <span *ngIf="queryId != ''" name="queryId" class="caption-subject bold">id: {{queryId}}</span>
+
+                            </div>
+
+                            <div class="collapse navbar-collapse pull-right">
+                                <ul class="nav navbar-nav">
+                                    <li *ngIf="queryId > 0">
+                                        <a 
+                                            id="saveQuery" (click)="saveQuery(queryContent, query.name)" 
+                                            title="Save current query"
+                                        >
+                                            <i class="fa fa-floppy-o fa-lg"></i> Save
+                                        </a>
+                                    </li>
+
+                                    <li *ngIf="queryId == 0" >
+                                        <a  
+                                            id="btnShow"                  
+                                            href="#modalShow2"               
+                                            data-toggle="modal"             
+                                            class="open-AddBookDialog"      
+                                            [attr.data-datashow]="query.name" 
+                                            title="Create and save a new query"
+                                        >
+                                            <i class="fa fa-floppy-o fa-lg"></i> Save
+                                        </a>
+                                    </li>
+
+                                    <li *ngIf="queryId > 0">
+                                        <a 
+                                            id="btnDelete"                  
+                                            href="#miventana"               
+                                            data-toggle="modal"             
+                                            class="open-AddBookDialog"      
+                                            [attr.data-id]="queryId" 
+                                            title="Delete selected query"
+                                        >
+                                            <i class="fa fa-trash-o fa-lg text-danger"></i> Delete
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a id="executeQuery" (click)="executeQuerysContent(queryContent)" title="Execute query"><i class="fa fa-play fa-lg"></i> Execute</a>
+                                    </li>
+                                    <li *ngIf="queryId == 0">
+                                        <a id="refreshQuery" (click)="refreshQuerysContent()" title="Erases the querys content"><i class="fa fa-refresh fa-lg"></i> Refresh</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>            
+
+                        <div class="portlet-body form">
+                            <form #registerForm1="ngForm" (ngSubmit)="onSubmit()">
+                                <div class="form-body">
+                                    
+                                    <div class="form-group has-success">
+                                            <textarea 
+                                                #notes="ngForm" 
+                                                ngControl="queryContent" 
+                                                class="form-control input-md" 
+                                                placeholder="Query Content" 
+                                                [(ngModel)]="queryContent" 
+                                                rows=13
+                                                #textArea 
+                                                (click)="getCaretPos(textArea)" 
+                                                (keyup)="getCaretPos(textArea)" 
+                                                style="resize:vertical"
+                                            >
+                                            </textarea>
+                                    </div>
+                                    
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    	</div>
+
+        <div class="col-md-3">
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption">
+                        <span name="titulo" class="caption-subject bold"><i class="fa fa-floppy-o"></i> Saved Querys</span>
+                    </div>
+                    <div class="tools">
+
+                        <span *ngIf="queryId > 0">
+                            <a id="unselectQuery" (click)="unselectQuery()" title="Unselect selected query"><i class="fa fa-check-square-o"></i> Unselect</a>
+                        </span>
+<!--
+                        <a *ngIf="searchString == null" [routerLink]="['/configs', pageActual]" title="Go Back"><i class="fa fa-arrow-circle-left fa-2x"></i></a>
+                        <a *ngIf="searchString != null" [routerLink]="['/configs', pageActual, searchString]" title="Go Back"><i class="fa fa-arrow-circle-left fa-2x"></i></a>
+-->                            
+                    </div>
+                </div>
+                    
+                <div class="portlet-body">
+                    <table 
+                        class="table table-striped table-bordered table-hover table-condensed table-checkable order-column" id="sample_1"
+                        style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 293px;"
+                    >
+                        <thead style="background-color: #fafafa;">
+                            <tr>
+                                <th style="width:60px;">Id</th>
+                                <th style="width:200px;">Name</th>                                
+                                <th style="width:40px;">Sel</th>                                
+                                <th style="width:20px;"><i class="fa fa-ellipsis-h"></i></th>
+                            </tr>
+                        </thead>
+                            
+                        <!--<tbody style="display: block; overflow-y: auto; height: 300px;">-->
+                        <tbody>
+                            <tr *ngFor="let query of querys ; let in=index" class="odd gradeX">
+                                <td *ngIf="activeLine == in" class="backGroundColor-a">{{query.id}}</td>
+                                <td *ngIf="activeLine != in">{{query.id}}</td>
+
+                                <td *ngIf="activeLine == in" class="backGroundColor-a">{{query.name.toUpperCase().substring(0,21)}}</td>
+                                <td *ngIf="activeLine != in">{{query.name.toUpperCase().substring(0,21)}}</td>
+
+                                <td *ngIf="activeLine == in" class="backGroundColor-a text-center">
+                                    <a title="Select query" (click)="addQuery(query.queryContent, in, query.id, query.name)"><i class="fa fa-check-square-o fa-lg"></i></a>                                      
+                                </td>
+                                <td *ngIf="activeLine != in" class="text-center">
+                                    <a title="Select query" (click)="addQuery(query.queryContent, in, query.id, query.name)"><i class="fa fa-square-o fa-lg"></i></a>                                      
+                                </td>
+
+                                <td *ngIf="activeLine == in" class="backGroundColor-a text-center">
+                                    <a
+                                        id="btnShow"                  
+                                        href="#modalShow1"               
+                                        data-toggle="modal"             
+                                        class="open-AddBookDialog"      
+                                        [attr.data-datashow]="query.queryContent" 
+                                        title="Show query content"
+                                    >
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </a>
+                                </td>
+                                <td *ngIf="activeLine != in">
+                                    <a
+                                        id="btnShow"                  
+                                        href="#modalShow1"               
+                                        data-toggle="modal"             
+                                        class="open-AddBookDialog"      
+                                        [attr.data-datashow]="query.queryContent" 
+                                        title="Show query content"
+                                    >
+                                        <i class="fa fa-ellipsis-h"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>          
+            
+        </div>
+	</div>
+
+    <div class="clearfix"></div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="portlet light bordered">
+                <div class="portlet-body">
+                    <ul class="nav nav-tabs">
+                        <li id="tab_1_1_li" class="active">
+                            <a href="#tab_1_1" data-toggle="tab" aria-expanded="true">
+                                <label class="control-label" style="font-size:12px">Results</label>
+                            </a>
+                        </li>
+                        <li id="tab_1_2_li" class="">
+                            <a href="#tab_1_2" data-toggle="tab" aria-expanded="false">
+                                <label class="control-label" style="font-size:12px">Logs</label>
+                            </a>
+                        </li>
+                        <div class="collapse navbar-collapse pull-right nav">
+                            <li>
+                                <a (click)="transJsonCsv()" title="Eexport CSV"><i class="fa fa-download"></i> Export CSV</a>
+                            </li>
+                        </div>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="tab_1_1" class="tab-pane fade active in">
+                            <div class="portlet-body">
+                                <table 
+                                    class="table table-striped table-hover table-condensed table-checkable order-column" id="sample_1"
+                                    style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 280px;"
+                                >
+                                    <!-- definicion de la cabecera de la tabla-->
+                                    <thead style="background-color:#fafafa; ">
+                                         <tr>
+                                            <th *ngFor="let queryHeader of queryHeaders" style="text-align:left; width:1%;"> 
+                                            <!-- style="width:400px; font-size:30px; background-color:#ff0000;" -->
+                                                {{queryHeader}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr *ngFor="let queryResult of queryResults" class="" >
+                                            <td *ngFor="let queryHeader of queryHeaders" style="text-align:left; ">
+                                                {{queryResult[queryHeader]}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div id="tab_1_2" class="tab-pane fade">
+                            <div class="portlet-body">
+                                <table 
+                                    class="table table-striped table-hover table-condensed table-checkable order-column" id="sample_1"
+                                    style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+                                >
+                                    <thead style="background-color: #fafafa;">                                             
+                                        <tr *ngIf=" arrqueryslogs.length != 0">
+                                            <th style="width:40px;"> 
+                                            </th>
+                                            
+                                            <th style="width:40px;"> 
+                                                IdLog
+                                            </th>
+                                            
+                                            <th style="width:115px;"> 
+                                                Time
+                                            </th>
+
+                                            <th style="width:400px;"> 
+                                                Query
+                                            </th>
+                                            
+                                            <th style="width:800px;"> 
+                                                Log
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr *ngFor="let arrqueryslog of arrqueryslogs;" class="odd gradeX">
+                                            <td class="text-center">
+                                                <a title="Replace query" (click)="addQueryLog(arrqueryslog.queryContent)"><i class="fa fa-arrow-circle-up fa-lg"></i></a>
+                                            </td>
+                                            <td>{{arrqueryslog.idLog}}</td>
+                                            <td>{{arrqueryslog.queryTime}}</td>
+                                            <td>{{arrqueryslog.queryContent}}</td>
+                                            <td>{{arrqueryslog.queryLog}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalShow1" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                <h4>Message</h4>
+            </div>
+
+            <div class="modal-body">
+                <p #recordShow1 id="recordShow1" value=""></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>    
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalShow2" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                <h4>QUERY NAME</h4>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="comment" class="control-label">Name</label>
+                    <textarea #recordShow2 type="text" class="form-control" id="recordShow2" value="" rows=1 style="resize:none;" maxlength="50"></textarea>
+                  </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>    
+                <button (click)="saveQuery(queryContent, recordShow2.value)" type="button" class="btn btn-success" data-dismiss="modal">Submit</button>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="miventana" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+                <h4>Delete Query</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>If you delete this query can not be recovered, delete anyway ?</p>
+                <span #recordId id="recordId" value=""></span>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>    
+                <button (click)="deleteQuery(recordId.value)" type="button" class="btn btn-success" data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+

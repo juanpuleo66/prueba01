@@ -1,0 +1,47 @@
+#footer {
+	background: #ddd;
+	position:fixed; /*El div será ubicado con relación a la pantalla*/
+	width:100%;
+	left:0px; /*A la derecha deje un espacio de 0px*/
+	right:0px; /*A la izquierda deje un espacio de 0px*/
+	bottom:0px; /*Abajo deje un espacio de 0px*/
+	height:30px; /*alto del div*/
+	z-index:0;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 30px;
+  padding-right: 30px; 
+  text-align: center;
+}
+
+#footer p {
+	margin-top: 8px;
+	font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 12px;
+	color: #000;
+}
+
+.user-image{
+	width: 35px;
+	height: 35px;
+	overflow: hidden;
+	/*border-radius: 200px;*/
+	margin-top: 8px;
+}
+
+.user-image-form{
+	width: 75px;
+	height: 75px;
+	overflow: hidden;
+	border-radius: 200px;
+}
+
+.user-image img{
+	margin: 0px;
+	padding: 0px;
+	margin-top: -30px;
+	margin-left: -30px;
+	width: 65px;
+}
+
+/*Styles for a table with scroll*/

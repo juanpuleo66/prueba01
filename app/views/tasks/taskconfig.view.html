@@ -1,0 +1,841 @@
+<window-modal-message></window-modal-message>
+
+<div *ngIf="identity">
+
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-12">
+	    		    <div *ngIf="loading == 'show'" class="progress progress-striped active">
+    	        		<div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%" ></div>
+        			</div>
+			</div>	
+		</div>
+	</div>	
+
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-12">
+				<div *ngIf="status == 'error'">
+					<div class="note note-danger">
+						<h3>{{status}} {{code}}</h3>
+						<p>{{msg}}</p>
+					</div>
+				</div>
+				<div *ngIf="status2 == 'error'">
+					<div class="note note-danger">
+						<h3>{{status2}} {{code}}</h3>
+						<p>{{msg}}</p>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+
+				<div class="portlet light bordered">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-tasks"></i>{{titulo}}
+						</div>
+                    <!-- <div class="col-md-3"> -->
+	                    <div class="collapse navbar-collapse pull-right">
+							<ul class="nav navbar-nav">
+                                <li *ngIf="taskLogsStatus != '2'">
+                                    <a id="runTask" (click)="runTask(task.id)" title="Run Task"><i class="fa fa-play fa-lg text-success"></i> Run Task </a>
+                                </li>
+                                <li *ngIf="taskLogsStatus == '2'">
+                                    <a id="stopTask" (click)="stopTask(task.id)" title="Stop Task"><i class="fa fa-stop fa-lg"></i> Stop Task </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;" title="Delete task">
+                                        <i class="fa fa-trash-o fa-lg text-danger"></i> Delete task </a>
+                                </li>
+                                <li>
+                                    <a (click)="gotoConfig(task.idConfig)" title="Goto config">
+                                        <i class="fa fa-file-code-o fa-lg"></i> Goto config </a>
+                                </li>
+                                <li>
+									<a *ngIf="refreshLogsActive" id="runTask" (click)="detailTaskConfigLogs(task.id)" title="Refreshing logs"><i class="fa fa-refresh fa-spin fa-lg"></i> Refreshing logs </a>
+									<a *ngIf="!refreshLogsActive" id="runTask" (click)="detailTaskConfigLogs(task.id)" title="Refresh logs"><i class="fa fa-refresh fa-lg"></i> Refresh logs </a>
+                                </li>
+                                <li>
+									<a *ngIf="searchString == null" [routerLink]="['/tasks', pageActual]" title="Go Back"><i class="fa fa-arrow-circle-left fa-lg"></i> Go Back </a>
+									<a *ngIf="searchString != null" [routerLink]="['/tasks', pageActual, searchString]" title="Go Back"><i class="fa fa-arrow-circle-left fa-lg"></i> Go Back </a>
+                                </li>
+	                        </ul>
+						</div>
+                    <!-- </div> -->
+ 		    		</div>
+						
+		    		<div *ngIf="status != 'error'" class="portlet-body form">
+		    			<form #registerForm1="ngForm" (ngSubmit)="onSubmit()">
+		    				<div class="form-body">
+								<div class="form-group has-success">
+									<div class="form-group">
+										<div class="col-md-1">
+				    						<p>
+				    							<label class="control-label">ID TASK</label>
+												<input 
+					    							#id="ngForm" 
+				    								ngControl="id" 
+				    								type="text" 
+				    								class="form-control input-sm" 
+						    						readonly="readonly"
+				    								placeholder="Id of the task" 
+				    								[(ngModel)]="task.id"
+			    								>
+											</p>
+										</div>
+
+										<div class="col-md-1">
+				    						<p>
+				    							<label class="control-label">ID CONFIG</label>
+												<input 
+					    							#idConfig="ngForm" 
+				    								ngControl="idConfig" 
+				    								type="text" 
+				    								class="form-control input-sm" 
+						    						readonly="readonly"
+				    								placeholder="Id of the task" 
+				    								[(ngModel)]="task.idConfig"
+			    								>
+											</p>
+										</div>
+
+										<div class="col-md-2">
+				    						<p>
+				    							<label class="control-label">CONFIG NAME</label>
+												<input 
+					    							#configName="ngForm" 
+				    								ngControl="configName" 
+				    								type="text" 
+				    								class="form-control input-sm" 
+						    						readonly="readonly"
+				    								placeholder="Name of the config" 
+				    								[(ngModel)]="task.configName"
+			    								>
+											</p>
+										</div>
+
+										<div class="col-md-2">
+				    						<p>
+				    							<label class="control-label">SCRIPT NAME</label>
+												<input 
+					    							#scriptName="ngForm" 
+				    								ngControl="scriptName" 
+				    								type="text" 
+				    								class="form-control input-sm" 
+						    						readonly="readonly"
+				    								placeholder="Name of the script" 
+				    								[(ngModel)]="task.scriptName"
+			    								>
+											</p>
+										</div>
+
+	 		    						<div class="col-md-2">
+	 		    							<p>
+				    							<label class="control-label">LANGUAGE</label>
+				    							<input 
+							    					#scriptLanguage="ngForm" 
+							    					ngControl="scriptLanguage" 
+							    					type="text" 
+							    					class="form-control input-sm" 
+						    						readonly="readonly"
+						    						placeholder="Language of the script" 
+						    						[(ngModel)]="task.scriptLanguage"
+					    						>
+				    						</p>
+				    					</div>
+
+										<div class="col-md-4">
+			    							<p>
+			    								<label class="control-label">PATH</label>
+												<input 
+					    							#scriptPath="ngForm" 
+					    							ngControl="scriptPath" 
+					    							type="text" 
+				    								class="form-control input-sm" 
+							    					readonly="readonly"
+				    								placeholder="Path of the script" 
+				    								[(ngModel)]="task.scriptPath"
+			    								>
+											</p>
+										</div>
+																						
+				    					<div class="clearfix"></div>
+	 		    						
+	 		    						<div class="col-md-11">
+						    				<p>
+						    					<label class="control-label">COMMENT</label>
+						    					<textarea 
+							    					#comment="ngForm" 
+							    					ngControl="comment" 
+						    						class="form-control input-sm" 
+						    						placeholder="Comment for the task" 
+						    						rows="1"
+						    						readonly="readonly"
+						    						[(ngModel)]="task.comment"
+						    						style="resize:vertical"
+					    						>
+					    						</textarea>
+				    						</p>
+										</div>
+
+	 		    						<div class="col-md-1" style="margin-top:30px;">
+											<a
+												id="btnShowB"                  
+												href="#modalShow4"               
+												data-toggle="modal"             
+												class="open-AddBookDialog"      
+												[attr.data-datashow0]="'TASK COMMENT'" 
+												[attr.data-datashow1]="'COMMENT'" 
+												[attr.data-datashow2]="task.comment" 
+												[attr.data-datashow3]=""
+												[attr.data-datashow4]="'A'"
+												title="Edit the comment for the task"
+											>
+												<i class="fa fa-pencil-square-o fa-2x"></i>
+											</a> 
+										</div>
+
+				    				</div>
+
+     								<div class="clearfix"></div>
+
+									<div class="portlet-body">
+	                                    <ul class="nav nav-tabs">
+	                                        <li id="tab_1_1_li" class="active">
+	                                            <a href="#tab_1_1" data-toggle="tab" aria-expanded="true">
+	                                            	<label class="control-label" style="font-size:12px">CONFIG LOCK</label>
+	                                            </a>
+	                                        </li>
+	                                        <li id="tab_1_2_li" class="">
+	                                            <a href="#tab_1_2" data-toggle="tab" aria-expanded="false">
+	                                            	<label class="control-label" style="font-size:12px">LOG</label>
+	                                            </a>
+	                                        </li>
+	                                        <li id="tab_1_3_li" class="">
+	                                            <a href="#tab_1_3" data-toggle="tab" aria-expanded="false">
+	                                            	<label class="control-label" style="font-size:12px">WARNING</label>
+	                                            </a>
+	                                        </li>
+	                                        <li id="tab_1_4_li" class="">
+	                                            <a href="#tab_1_4" data-toggle="tab" aria-expanded="false">
+	                                            	<label class="control-label" style="font-size:12px">OUTPUT</label>
+	                                            </a>
+	                                        </li>
+	                                    </ul>
+
+	                                    <div class="tab-content">
+	                                        <div id="tab_1_1" class="tab-pane fade active in">
+				   								
+				   								<div class="form-group">
+				   									<div class="col-md-2">
+				   										<label class="control-label">INPUT RESOURCES</label>
+			    									</div>
+
+			    									<div class="clearfix"></div>
+
+		    										<div class="col-md-2">
+														<label class="control-label">Name</label>
+													</div>
+
+		    										<div class="col-md-5">
+														<label class="control-label">Value</label>
+													</div>
+					        					</div>
+
+												<div class="clearfix"></div>
+
+												<div *ngFor="let inputparam of inputparams; let in=index ">
+													<div class="form-group">
+			    										<div class="col-md-2">
+															<input 
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{inputparam.paramName}}"  
+																title="Name of the attribute" 
+															>
+														</div>
+			    										<div class="col-md-5">
+															<input
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{inputparam.paramValue}}"  
+																title="Value of the attribute" 
+															>
+														</div>
+													</div>											
+													<div class="clearfix"></div>
+												</div>
+
+												<hr>
+
+				   								<div class="form-group">
+				   									<div class="col-md-2">
+				   										<label class="control-label">SCRIPT PARAMETERS</label>
+			    									</div>
+
+			    									<div class="clearfix"></div>
+
+		    										<div class="col-md-2">
+														<label class="control-label">Name</label>
+													</div>
+
+		    										<div class="col-md-5">
+														<label class="control-label">Value</label>
+													</div>
+
+		    										<div class="col-md-5">
+														<label class="control-label">Description</label>
+													</div>
+					        					</div>
+
+												<div *ngFor="let scriptparam of scriptparams; let in=index ">
+													<div class="form-group">
+			    										<div class="col-md-2">
+															<input 
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{scriptparam.paramName}}"  
+																title="Name of the parameter" 
+															>
+														</div>
+			    										<div class="col-md-5">
+															<input 
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{scriptparam.paramValue}}"  
+																title="Value of the parameter" 
+															>
+														</div>
+			    										<div class="col-md-5">
+															<input 
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{scriptparam.paramDescription}}"  
+																title="Description of the parameter" 
+															>
+														</div>
+													</div>													
+													<div class="clearfix"></div>
+												</div>
+
+												<hr>
+
+				   								<div class="form-group">
+				   									<div class="col-md-2">
+				   										<label class="control-label">OUTPUT RESOURCES</label>
+			    									</div>
+
+			    									<div class="clearfix"></div>
+
+		    										<div class="col-md-2">
+														<label class="control-label">Name</label>
+													</div>
+
+		    										<div class="col-md-5">
+														<label class="control-label">Value</label>
+													</div>
+					        					</div>
+
+												<div class="clearfix"></div>
+
+												<div *ngFor="let outputparam of outputparams; let in=index ">
+													<div class="form-group">
+			    										<div class="col-md-2">
+															<input 
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{outputparam.paramName}}"
+																title="Name of the attribute for" 
+															>
+														</div>
+			    										<div class="col-md-5">
+															<input 
+																type="text" 
+																class="form-control input-sm" 
+																readonly="readonly"
+																value="{{outputparam.paramValue}}"  
+																title="Value of the attribute for" 
+															>
+														</div>
+													</div>											
+													<div class="clearfix"></div>
+												</div>
+
+	                                        </div>
+	                                        
+	                                        <div id="tab_1_2" class="tab-pane fade">
+    											<div class="portlet-body">
+    											<!-- <div style="position: relative; overflow: auto; width: 100%; max-height: 300px;"> -->
+<!--           											<table 
+                										class="table table-striped table-bordered table-hover table-condensed table-checkable order-column" id="sample_1"
+                										style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+            										>
+ -->          										
+ 													<table 
+                										class="table table-striped table-hover table-condensed table-checkable order-column" id="sample_1"
+                										style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+            										>
+	              										<thead style="background-color: #fafafa;">
+    	                									<tr>
+						        								<th style="width:5%;"> 
+	        														<a (click)="setOrder('id')">
+	            	                    								id
+						                                				<i *ngIf="colAct != 'id'" class="fa fa-sort"></i>
+	        															<i *ngIf="colAct == 'id' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+	        															<i *ngIf="colAct == 'id' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+					        										</a>
+	        													</th>
+																
+                    	    									<th style="width:8%;"> 
+                	            									<a (click)="setOrder('started')">Started
+		    	                    									<i *ngIf="colAct != 'started'" class="fa fa-sort"></i>
+        			        		                					<i *ngIf="colAct == 'started' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+    	            				                					<i *ngIf="colAct == 'started' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+	        		                		    					</a>
+		                        								</th>
+                        										
+                        										<th style="width:8%;"> 
+                            										<a (click)="setOrder('finished')">Finished
+                                										<i *ngIf="colAct != 'finished'" class="fa fa-sort"></i>
+                                										<i *ngIf="colAct == 'finished' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                										<i *ngIf="colAct == 'finished' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            										</a>
+                        										</th>
+                        											
+																<th style="width:63%;"> 
+								    								<a (click)="setOrder('error')">Error
+													                	<i *ngIf="colAct != 'error'" class="fa fa-sort"></i>
+								                    					<i *ngIf="colAct == 'error' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+								                    					<i *ngIf="colAct == 'error' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+													            	</a>
+									                        	</th>
+                        										
+                        										<th style="width:2%"> 
+								                    	        </th>
+
+                        										<th style="width:4%;"> 
+								                    	        	<a (click)="setOrder('userexecute')">User
+                                										<i *ngIf="colAct != 'userexecute'" class="fa fa-sort"></i>
+                                										<i *ngIf="colAct == 'userexecute' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                										<i *ngIf="colAct == 'userexecute' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+								    	                        	</a>
+                        										</th>
+																
+											                    <th style="width:4%;"> 
+                        	    			                    	<a (click)="setOrder('pid')">PID
+			        	                                            	<i *ngIf="colAct != 'pid'" class="fa fa-sort"></i>
+                	                			                    	<i *ngIf="colAct == 'pid' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+            	                    			                    	<i *ngIf="colAct == 'pid' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+        	                    			                    	</a>
+    	                    			                    	</th>
+	
+				        	                                    <th style="width:6%;"> 
+				    	                                            <a (click)="setOrder('status')">Status
+					                                                    <i *ngIf="colAct != 'status'" class="fa fa-sort"></i>
+					                                                    <i *ngIf="colAct == 'status' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+					                                                    <i *ngIf="colAct == 'status' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+					                                                </a>
+					                                            </th>
+				                            				</tr>
+				                            	   		</thead>
+                    
+            											<!-- <tbody style="display: block; overflow-y: auto; height: 300px;">  -->
+								             		    <tbody>
+    														<tr *ngFor="let tasklog of tasklogs; let in=index" class="odd gradeX">
+                		  										
+        														<td>{{tasklog.id}}</td>
+		                        								<td>{{tasklog.started.timestamp | generateDate}}</td>
+																		
+        		                								<td *ngIf="tasklog.finished" >{{tasklog.finished.timestamp | generateDate}}</td>
+                		        								<td *ngIf="!tasklog.finished" ></td>
+																												
+							    								<!-- <td><div id="idDivTableData1" class="classDivTableData1">{{tasklog.error}}</div></td> -->
+							    								<td><div class="classDivTableData1">{{tasklog.error}}</div></td>
+							                		        								
+							                		        	<td class="text-center">
+ 								                		        	<a *ngIf="tasklog.error && tasklog.error.length > 0"
+							                		        			id="btnShowA"                  
+							                                			href="#modalShow3"               
+							                                			data-toggle="modal"             
+							                                			class="open-AddBookDialog"      
+																		[attr.data-datashow0]="'TASK LOG ERROR DETAIL'" 
+																		[attr.data-datashow1]="tasklog.error" 
+							                                			title="Show task log error"
+							                                		>
+							                		        			<i class="fa fa-ellipsis-h"></i>
+							                		        		</a>							                		        		
+							                		        	</td>
+																	
+                		        								<td class="text-center">{{tasklog.userexecute}}</td>
+		                        								<td>{{tasklog.pid}}</td>
+
+										                        <td *ngIf="tasklog.status == 0" class="text-center">
+										                            <button type="button" class="btn gray-salsa btn-sm" style="cursor:pointer">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unrun&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 1" class="text-center">
+										                            <button type="button" class="btn green-haze btn-sm" style="cursor:pointer">&nbsp;&nbsp;&nbsp;Success&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 2" class="text-center">
+										                            <button type="button" class="btn green-jungle btn-sm" style="cursor:wait">&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 3" class="text-center">
+										                            <button type="button" class="btn yellow-crusta btn-sm" style="cursor:not-allowed">&nbsp;&nbsp;&nbsp;Stopped&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 4" class="text-center">
+										                            <button type="button" class="btn red-mint btn-sm" style="cursor:help">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Error&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 5" class="text-center">
+										                            <button type="button" class="btn purple-medium btn-sm" style="cursor:help">Server-Error</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 6" class="text-center">
+										                            <button type="button" class="btn yellow-gold btn-sm" style="cursor:help"><i class="fa fa-exclamation-triangle"></i>&nbsp;Warning&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklog.status == 7" class="text-center">
+										                            <button type="button" class="btn green-turquoise btn-sm" style="cursor:pointer">&nbsp;W-success&nbsp;</button>
+										                        </td>										                    
+
+    														</tr>
+                										</tbody>
+    												</table>
+    											</div>
+	                                        </div>
+
+	                                        <div id="tab_1_3" class="tab-pane fade">
+    											<div class="portlet-body">
+    											<!-- <div style="position: relative; overflow: auto; width: 100%; max-height: 300px;"> -->
+<!--           											<table 
+                										class="table table-striped table-bordered table-hover table-condensed table-checkable order-column" id="sample_1"
+                										style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+            										>
+ -->          										
+ 													<table 
+                										class="table table-striped table-hover table-condensed table-checkable order-column" id="sample_1"
+                										style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+            										>
+	              										<thead style="background-color: #fafafa;">
+    	                									<tr>
+						        								<th style="width:5%;"> 
+	        														<a (click)="setOrder('id')">
+	            	                    								id
+						                                				<i *ngIf="colAct != 'id'" class="fa fa-sort"></i>
+	        															<i *ngIf="colAct == 'id' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+	        															<i *ngIf="colAct == 'id' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+					        										</a>
+	        													</th>
+																
+                    	    									<th style="width:43%;"> 
+                	            									<a (click)="setOrder('started')">Message
+		    	                    									<i *ngIf="colAct != 'started'" class="fa fa-sort"></i>
+        			        		                					<i *ngIf="colAct == 'started' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+    	            				                					<i *ngIf="colAct == 'started' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+	        		                		    					</a>
+		                        								</th>
+                        										
+                        										<th style="width:2%;"> 
+								                    	        </th>
+
+                        										<th style="width:42%;"> 
+                            										<a (click)="setOrder('finished')">Action
+                                										<i *ngIf="colAct != 'finished'" class="fa fa-sort"></i>
+                                										<i *ngIf="colAct == 'finished' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+                                										<i *ngIf="colAct == 'finished' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+                            										</a>
+                        										</th>
+                       										
+                        										<th style="width:2%;"> 
+								                    	        </th>
+
+										                        <th style="width:2%;"> 
+										        				</th>					
+
+				        	                                    <th style="width:6%;"> 
+				    	                                            <a (click)="setOrder('status')">Status
+					                                                    <i *ngIf="colAct != 'status'" class="fa fa-sort"></i>
+					                                                    <i *ngIf="colAct == 'status' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+					                                                    <i *ngIf="colAct == 'status' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+					                                                </a>
+					                                            </th>
+
+				                            				</tr>
+				                            	   		</thead>
+                    
+            											<!-- <tbody style="display: block; overflow-y: auto; height: 300px;">  -->
+								             		    <tbody>
+    														<tr *ngFor="let tasklogwarning of tasklogswarnings; let in=index" class="odd gradeX">
+                		  										
+        														<td>{{tasklogwarning.id}}</td>
+																												
+							    								<td><div class="classDivTableData1">{{tasklogwarning.warning}}</div></td>
+							                		        	<td class="text-center">
+							                		        		<a *ngIf="tasklogwarning.warning.length > 0"
+							                		        			id="btnShowA"                  
+							                                			href="#modalShow3"               
+							                                			data-toggle="modal"             
+							                                			class="open-AddBookDialog"      
+																		[attr.data-datashow0]="'TASK WARNING MESSAGE'" 
+																		[attr.data-datashow1]="tasklogwarning.warning"  
+							                                			title="Show message"
+							                                		>
+							                		        			<i class="fa fa-ellipsis-h"></i>
+							                		        		</a>
+							                		        	</td>
+							    								<td><div class="classDivTableData1">{{tasklogwarning.action}}</div></td>
+							                		        								
+							                		        	<td class="text-center">
+							                		        		<a *ngIf="tasklogwarning.action.length > 0"
+							                		        			id="btnShowA"                  
+							                                			href="#modalShow3"               
+							                                			data-toggle="modal"             
+							                                			class="open-AddBookDialog"      
+																		[attr.data-datashow0]="'TASK WARNING ACTION'" 
+																		[attr.data-datashow1]="tasklogwarning.action" 
+							                                			title="Show action"
+							                                		>
+							                		        			<i class="fa fa-ellipsis-h"></i>
+							                		        		</a>
+							                		        	</td>
+
+										                        <td> 
+ 																	<a *ngIf="tasklogwarning.warning.length > 0 && tasklogwarning.action.length == 0"
+																		id="btnShowB"                  
+																		href="#modalShow4"               
+																		data-toggle="modal"             
+																		class="open-AddBookDialog"      
+																		[attr.data-datashow0]="'ACTION FOR THE WARNING'" 
+																		[attr.data-datashow1]="'ACTION'" 
+																		[attr.data-datashow2]="tasklogwarning.action" 
+																		[attr.data-datashow3]="in"
+																		[attr.data-datashow4]="'B'"
+																		title="Inserts an action for the warning"
+																	>
+																		<i class="fa fa-plus fa-lg"></i>
+																	</a>
+										                        </td>										                    
+
+										                        <td *ngIf="tasklogwarning.status == 0" class="text-center">
+										                            <button type="button" class="btn gray-salsa btn-sm" style="cursor:pointer">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unrun&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 1" class="text-center">
+										                            <button type="button" class="btn green-haze btn-sm" style="cursor:pointer">&nbsp;&nbsp;&nbsp;Success&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 2" class="text-center">
+										                            <button type="button" class="btn green-jungle btn-sm" style="cursor:wait">&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 3" class="text-center">
+										                            <button type="button" class="btn yellow-crusta btn-sm" style="cursor:not-allowed">&nbsp;&nbsp;&nbsp;Stopped&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 4" class="text-center">
+										                            <button type="button" class="btn red-mint btn-sm" style="cursor:help">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Error&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 5" class="text-center">
+										                            <button type="button" class="btn purple-medium btn-sm" style="cursor:help">Server-Error</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 6" class="text-center">
+										                            <button type="button" class="btn yellow-gold btn-sm" style="cursor:help"><i class="fa fa-exclamation-triangle"></i>&nbsp;Warning&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogwarning.status == 7" class="text-center">
+										                            <button type="button" class="btn green-turquoise btn-sm" style="cursor:pointer">&nbsp;W-success&nbsp;</button>
+										                        </td>										                    
+
+    														</tr>
+                										</tbody>
+    												</table>
+    											</div>
+	                                        </div>
+
+	                                        <div id="tab_1_4" class="tab-pane fade">
+    											<div class="portlet-body">
+    											<!-- <div style="position: relative; overflow: auto; width: 100%; max-height: 300px;"> -->
+<!--           											<table 
+                										class="table table-striped table-bordered table-hover table-condensed table-checkable order-column" id="sample_1"
+                										style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+            										>
+ -->          										
+ 													<table 
+                										class="table table-striped table-hover table-condensed table-checkable order-column" id="sample_1"
+                										style="display: block; overflow-x: auto; overflow-y: auto; position: relative; width: 100%; max-height: 500px;"
+            										>
+	              										<thead style="background-color: #fafafa;">
+    	                									<tr>
+						        								<th style="width:5%;"> 
+	        														<a (click)="setOrder('id')">
+	            	                    								id
+						                                				<i *ngIf="colAct != 'id'" class="fa fa-sort"></i>
+	        															<i *ngIf="colAct == 'id' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+	        															<i *ngIf="colAct == 'id' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+					        										</a>
+	        													</th>
+                       											
+																<th style="width:85%;"> 
+								    								<a (click)="setOrder('output')">Output
+													                	<i *ngIf="colAct != 'error'" class="fa fa-sort"></i>
+								                    					<i *ngIf="colAct == 'error' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+								                    					<i *ngIf="colAct == 'error' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+													            	</a>
+									                        	</th>
+                        										
+                        										<th style="width:2%"> 
+								                    	        </th>
+	
+				        	                                    <th style="width:6%;"> 
+				    	                                            <a (click)="setOrder('status')">Status
+					                                                    <i *ngIf="colAct != 'status'" class="fa fa-sort"></i>
+					                                                    <i *ngIf="colAct == 'status' && colOrd == 'desc'" class="fa fa-sort-desc"></i>
+					                                                    <i *ngIf="colAct == 'status' && colOrd == 'asc'" class="fa fa-sort-asc"></i>
+					                                                </a>
+					                                            </th>
+				                            				</tr>
+				                            	   		</thead>
+                    
+            											<!-- <tbody style="display: block; overflow-y: auto; height: 300px;">  -->
+								             		    <tbody>
+    														<tr *ngFor="let tasklogsoutput of tasklogsoutputs; let in=index" class="odd gradeX">
+                		  										
+        														<td>{{tasklogsoutput.id}}</td>
+							    								<td><div class="classDivTableData1">{{tasklogsoutput.output}}</div></td>
+							                		        								
+							                		        	<td class="text-center">
+ 								                		        	<a *ngIf="tasklogsoutput.output && tasklogsoutput.output.length > 0"
+							                		        			id="btnShowA"                  
+							                                			href="#modalShow3"               
+							                                			data-toggle="modal"             
+							                                			class="open-AddBookDialog"      
+																		[attr.data-datashow0]="'TASK OUTPUT DETAIL'" 
+																		[attr.data-datashow1]="tasklogsoutput.output" 
+							                                			title="Show task output"
+							                                		>
+							                		        			<i class="fa fa-ellipsis-h"></i>
+							                		        		</a>							                		        		
+							                		        	</td>
+																	
+										                        <td *ngIf="tasklogsoutput.status == 0" class="text-center">
+										                            <button type="button" class="btn gray-salsa btn-sm" style="cursor:pointer">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unrun&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 1" class="text-center">
+										                            <button type="button" class="btn green-haze btn-sm" style="cursor:pointer">&nbsp;&nbsp;&nbsp;Success&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 2" class="text-center">
+										                            <button type="button" class="btn green-jungle btn-sm" style="cursor:wait">&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 3" class="text-center">
+										                            <button type="button" class="btn yellow-crusta btn-sm" style="cursor:not-allowed">&nbsp;&nbsp;&nbsp;Stopped&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 4" class="text-center">
+										                            <button type="button" class="btn red-mint btn-sm" style="cursor:help">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Error&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 5" class="text-center">
+										                            <button type="button" class="btn purple-medium btn-sm" style="cursor:help">Server-Error</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 6" class="text-center">
+										                            <button type="button" class="btn yellow-gold btn-sm" style="cursor:help"><i class="fa fa-exclamation-triangle"></i>&nbsp;Warning&nbsp;</button>
+										                        </td>
+										                        <td *ngIf="tasklogsoutput.status == 7" class="text-center">
+										                            <button type="button" class="btn green-turquoise btn-sm" style="cursor:pointer">&nbsp;W-success&nbsp;</button>
+										                        </td>										                    
+
+    														</tr>
+                										</tbody>
+    												</table>
+    											</div>
+	                                        </div>
+
+	                                    </div>
+	                                </div>
+
+     								<div class="clearfix"></div>
+				    			</div>
+				    		</div>
+
+							<div class="clearfix"></div>
+
+							<div class="form-actions">
+								<a *ngIf="searchString == null" [routerLink]="['/tasks', pageActual]" title="Go Back" class="btn default">Go Back</a>
+								<a *ngIf="searchString != null" [routerLink]="['/tasks', pageActual, searchString]" title="Go Back" class="btn default">Go Back</a>
+		    				</div>
+		    			</form>
+		    		</div>
+		    	</div>
+		    </div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalShow4" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+	                <h4 id="priTitleB"></h4>
+	            </div>
+
+	            <div class="modal-body">
+	            	<form>
+			          <div class="form-group">
+			            <label id="recordTitleB" for="comment" class="control-label"></label>
+			            <textarea 
+			            	#recordShowB
+			            	type="text" 
+			            	class="form-control" 
+			            	id="recordShowB" 
+			            	value=""
+			            	style="resize:vertical"
+			            	rows="4"
+			            >
+			            </textarea>
+			            <input 
+			            	#recordShowIndexB
+			            	type="hidden" 
+			            	class="form-control" 
+			            	id="recordShowIndexB" 
+			            	value=""
+			            >
+			            <input 
+			            	#recordShowOptionB
+			            	type="hidden" 
+			            	class="form-control" 
+			            	id="recordShowOptionB" 
+			            	value=""
+			            >
+			          </div>
+			        </form>
+	            </div>
+
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> 
+	                <button (click)="updateData(recordShowB.value, recordShowIndexB.value, recordShowOptionB.value)" type="button" class="btn btn-success" data-dismiss="modal">Submit</button>	            
+                </div> 
+	        </div>
+	    </div>
+	</div>
+
+	<div class="modal fade" id="modalShow3" tab-ndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" >&times;</button>
+	                <h4 id="priTitleA"></h4>
+	            </div>
+
+	            <div class="modal-body">
+	            	<p #recordShowA id="recordShowA" value=""></p>
+	            </div>	            
+
+	            <div class="modal-footer">
+	                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>    
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+
+</div>
